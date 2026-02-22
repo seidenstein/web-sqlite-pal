@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSqlite } from '@/hooks/use-sqlite';
 import { SchemaPanel } from '@/components/sqlite/SchemaPanel';
 import { QueryEditor } from '@/components/sqlite/QueryEditor';
@@ -41,6 +41,8 @@ export default function Index() {
   const [tabs, setTabs] = useState<QueryTab[]>([]);
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, QueryResult>>({});
+  const tabsRef = useRef<QueryTab[]>([]);
+  tabsRef.current = tabs;
 
   const [showSchema, setShowSchema] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
@@ -168,7 +170,7 @@ export default function Index() {
     console.log('[executeQuery] activeDbId:', activeDbId, 'activeTabId:', activeTabId);
     console.log('[executeQuery] tabs:', JSON.stringify(tabs.map(t => ({ id: t.id, sql: t.sql.slice(0, 50) }))));
     if (!activeDbId || !activeTabId) return;
-    const currentTab = tabs.find(t => t.id === activeTabId);
+    const currentTab = tabsRef.current.find(t => t.id === activeTabId);
     if (!currentTab) { console.log('[executeQuery] tab not found'); return; }
     const sqlText = currentTab.sql.trim();
     if (!sqlText) { console.log('[executeQuery] sql is empty'); return; }
