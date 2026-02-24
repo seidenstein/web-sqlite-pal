@@ -7,7 +7,7 @@ let sqlPromise: ReturnType<typeof initSqlJs> | null = null;
 function getSql() {
   if (!sqlPromise) {
     sqlPromise = initSqlJs({
-      locateFile: () => '/sql-wasm.wasm',
+      locateFile: (file) => import.meta.env.BASE_URL + file,
     }).catch(err => {
       sqlPromise = null;
       throw err;
